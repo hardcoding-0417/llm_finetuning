@@ -15,8 +15,7 @@ def load_json_dataset(file_path):
 # 데이터셋을 토크나이징 및 인코딩
 def encode_dataset(dataset, tokenizer, max_length):
     # term과 definition을 결합한 텍스트를 인코딩
-    texts = [f"Term: {entry['term']}\nDefinition: {entry['definition']}\nPOS: {entry['pos']}\nFacet: {entry['facet']}\nTop Level Domain: {entry['top_level_domain']}\nLevel2: {entry['level2']}\nLevel3: {entry['level3']}" for entry in dataset]
-    inputs = tokenizer(texts, truncation=True, padding=True, max_length=max_length, return_tensors='pt')
+    inputs = tokenizer(dataset, truncation=True, padding=True, max_length=max_length, return_tensors='pt')
     print("Successfully encoded dataset")
     return inputs
 
@@ -35,6 +34,18 @@ class TermDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.input_ids)
 
+# 토크나이징 결과를 확인하는 함수
+def check_tokenization(dataset, encoded_dataset, tokenizer):
+    for i in range(15,16):
+        print("-" * 50)
+        print(f"Original: \n{dataset[i]}")
+        print("-" * 50)
+        print(f"Tokenized: \n{encoded_dataset['input_ids'][i]}")
+        print("-" * 50)
+        print(f"Decoded: \n{tokenizer.decode(encoded_dataset['input_ids'][i])}")
+        print("-" * 50)
+    input("학습을 계속 진행하려면 Enter 키를 누르세요.")
+
 # 메인 함수: 데이터 로드, 토크나이징, 인코딩 및 모델 학습
 def main(train_dataset_path, valid_dataset_path, model_name, max_length):
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -44,6 +55,13 @@ def main(train_dataset_path, valid_dataset_path, model_name, max_length):
 
     encoded_train_dataset = encode_dataset(train_dataset, tokenizer, max_length)
     encoded_valid_dataset = encode_dataset(valid_dataset, tokenizer, max_length)
+
+    # 토크나이징 결과 확인
+    print("Train Dataset Tokenization Result:")
+    check_tokenization(train_dataset, encoded_train_dataset, tokenizer)
+    
+    print("Validation Dataset Tokenization Result:")
+    check_tokenization(valid_dataset, encoded_valid_dataset, tokenizer)
 
     train_term_dataset = TermDataset(encoded_train_dataset)
     valid_term_dataset = TermDataset(encoded_valid_dataset)
@@ -61,7 +79,7 @@ def main(train_dataset_path, valid_dataset_path, model_name, max_length):
     # 학습 인자 정의
     training_args = TrainingArguments(
         output_dir='output',  # 출력 디렉토리
-        num_train_epochs=3,  # 학습 에포크 수
+        num_train_epochs=10,  # 학습 에포크 수
         per_device_train_batch_size=12,  # 장치당 학습 배치 크기
         per_device_eval_batch_size=12,  # 장치당 평가 배치 크기
         warmup_steps=500,  # 웜업 스텝 수
@@ -95,7 +113,6 @@ def main(train_dataset_path, valid_dataset_path, model_name, max_length):
     tokenizer.save_pretrained(output_dir)
 
     print(f"파인튜닝된 모델이 {output_dir}에 저장되었습니다.")
-
 
 # 실행
 if __name__ == '__main__':
