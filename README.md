@@ -1,20 +1,45 @@
-# LLM Fine-Tuning
+# README
 
-이 레포는 LLM 파인튜닝 워크플로우를 실습하기 위한 자료실입니다. 천천히 따라하며 배워보세요.
+## 1. 용어집 다운로드 및 설정
 
-## 설치 및 준비
+1. [AI Hub](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=71614)에서 용어집을 다운로드합니다.
+    - 경로: `160.문화, 게임 콘텐츠 분야 용어 말뭉치\01-1.정식개방데이터\Training\02.라벨링데이터\TL용어.json`
+2. 다운로드한 용어집의 이름을 `dataset.json`으로 변경하여 코드와 같은 폴더에 넣어줍니다.
 
-1. 먼저, 용어집을 다운 받습니다. [AI Hub](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=71614)
-    - 160.문화, 게임 콘텐츠 분야 용어 말뭉치\01-1.정식개방데이터\Training\02.라벨링데이터\TL용어.json
-    - 용어집의 이름을 dataset.json으로 변경하여 코드와 같은 폴더에 넣어줍니다.
+## 2. PyTorch 및 Transformers 설치
 
-2. `torch`를 다운 받습니다. (먼저 NVIDIA Driver, CUDA, CuDNN이 적절히 깔려있어야 합니다.) [PyTorch](https://pytorch.org/)
+### NVIDIA Driver, CUDA, CuDNN 설치
 
-3. `transformers`를 다운 받습니다.
+1. 먼저, 설치하고자 하는 CUDA를 지원하는 NVIDIA DRIVER를 설치합니다.
+    - [NVIDIA Driver 다운로드](https://www.nvidia.com/Download/index.aspx)
+
+2. CUDA를 설치합니다.
+    - [CUDA Toolkit 다운로드](https://developer.nvidia.com/cuda-toolkit-archive)
+    - 예: CUDA 11.8 또는 CUDA 12.1
+
+3. CuDNN을 설치합니다.
+    - [CuDNN 다운로드](https://developer.nvidia.com/cudnn)
+    - CUDA 버전에 맞는 CuDNN 버전을 설치합니다.
+
+### PyTorch 설치
+
+4. PyTorch 공홈에서 스크롤을 쭉 내리면  
+내 CUDA에 맞는 설치 명령어를 찾을 수 있습니다. 해당 명령어를 터미널에서 실행해줍니다.
+    - [PyTorch 설치 가이드](https://pytorch.org/get-started/locally/)
+    - 예시:
+      ```bash
+      pip install torch torchvision torchaudio
+      # CUDA 11.8
+      pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+      # CUDA 12.1
+      pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+      ```
+
+5. Transformers 라이브러리를 설치해줍니다.
     ```bash
     pip install transformers
     ```
-
+  
 ## 코드
 
 코드는 크게 두 부분, 전처리와 파인튜닝으로 나뉘어 있습니다.
