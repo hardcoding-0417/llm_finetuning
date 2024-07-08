@@ -35,7 +35,7 @@ def chat_with_model(model_path, max_length=512, num_return_sequences=1, top_k=50
             print("-" * 50)
 
 if __name__ == '__main__':
-    model_path = "./fine_tuned_qwen2-0.5B"  # 파인튜닝된 모델 경로
+    model_path = "../fine_tuned_qwen2-0.5B"  # 파인튜닝된 모델 경로
     max_length = 512
     top_k = 50
     top_p = 0.5
